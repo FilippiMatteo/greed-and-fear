@@ -1,0 +1,234 @@
+<input id="data" type="hidden" value="{{data}}">
+<input id="prices" type="hidden" value="{{prices}}">
+
+<h2>Fear & Greed Index BTC </h2>
+<img src="https://alternative.me/crypto/fear-and-greed-index.png" alt="Latest Crypto Fear & Greed Index"/>
+
+<script src="./javascripts/chartjs/Chart.js"></script>
+<script src="./javascripts/chartjs/Chart.bundle.js"></script>
+<script src="./javascripts/chartjs/Chart.css"></script>
+
+<style>
+    .overflow-auto {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: auto
+    }
+
+    .canvas {
+        width: 200vw;
+        height: 100vh
+    }
+</style>
+
+<figure class="highcharts-figure">
+    <div id="container" style="height:50vw"></div>
+</figure>
+
+<script>
+
+    var getData   = JSON.parse(document.getElementById('data').value);
+    var getPrices = JSON.parse(document.getElementById('prices').value);
+    var arrPrices = [];
+    var arrData   = [];
+    var arrFear   = [];
+    var arrbpi    = Object.values(getPrices.bpi);
+
+
+    for (var i = getData.data.length - 1; i > -1; i--) {
+        var item = getData.data[i];
+        arrFear.push(item.value);
+
+        var a      = new Date(item.timestamp * 1000);
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var year   = a.getFullYear();
+        var month  = months[a.getMonth()];
+        var date   = a.getDate();
+        var time   = date + ' ' + month + ' ' + year;
+        arrData.push(time);
+    }
+
+    arrbpi.forEach(function (item) {
+        var j = 0;
+        arrPrices.push(item / (arrFear[j] * 5));
+    });
+
+    arrFear = arrFear.map(parseFloat);
+
+    Highcharts.chart('container', {
+        chart      : {
+
+            zoomType: 'xy'
+        },
+        title      : {
+            text: "Fear and Greed / BTC"
+        },
+        subtitle   : {
+            text: document.ontouchstart === undefined ?
+                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+        },
+        xAxis      : [{
+            categories: arrData,
+            crosshair : true
+        }],
+        yAxis      : [{ // Primary yAxis
+            type         : 'linear',
+            alignTicks   : true,
+            tickInterval : 1,
+            tickPositions: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+            title        : {
+                text  : 'Fear& Greed',
+                margin: 20,
+                style : {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+            labels       : {
+                align : 'right',
+                format: '{value}',
+                style : {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+            opposite     : true
+
+        }, { // Secondary yAxis
+            //  type         : 'logarithmic',
+            type         : 'linear',
+            tickInterval : 1,
+            //   tickPositions: [0.06, 0, 1, 2, 5, 10, 30, 50, 100, 400, 800, 1000, 1200, 2000, 3200, 6000, 8000, 10000, 12000, 14000, 20000].map((v) => Math.log10(v)),
+            tickPositions: [1000, 2000, 3200, 6000, 8000, 10000, 12000, 14000, 20000],
+            title        : {
+                text  : 'BTC[Price]',
+                margin: 10,
+                style : {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+
+            labels: {
+                align : 'right',
+                format: '{value}$',
+                style : {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            }
+
+        }],
+        legend     : {
+            enabled: false
+        },
+        plotOptions: {
+
+            animation: {
+                duration: 2000
+            }
+        },
+
+        series: [{
+            name   : 'Fear & Gread',
+            type   : 'spline',
+            yAxis  : 0,
+            data   : arrFear,
+            tooltip: {
+                valueSuffix: 'F&G'
+            }
+
+        }, {
+            name   : 'BTC',
+            type   : 'spline',
+            yAxis  : 1,
+            data   : arrbpi,
+            tooltip: {
+                valueSuffix: ' $'
+            }
+        }]
+    }); // fine highcharts
+
+
+    /*
+    var data = {
+        labels  : arrData,
+        datasets: [{
+            label                    : "G&F",
+            fill                     : false,
+            lineTension              : 0.1,
+            backgroundColor          : "rgba(225,0,0,0.4)",
+            borderColor              : "red", // The main line color
+            borderCapStyle           : 'square',
+            borderDash               : [], // try [5, 15] for instance
+            borderDashOffset         : 0.0,
+            borderJoinStyle          : 'miter',
+            pointBorderColor         : "black",
+            pointBackgroundColor     : "white",
+            pointBorderWidth         : 0.1,
+            pointHoverRadius         : 0.1,
+            pointHoverBackgroundColor: "yellow",
+            pointHoverBorderColor    : "brown",
+            pointHoverBorderWidth    : 2,
+            pointRadius              : 4,
+            pointHitRadius           : 10,
+            // notice the gap in the data and the spanGaps: true
+            data                     : arrFear,
+            spanGaps                 : true,
+        }, {
+            label                    : "USD/BTC",
+            fill                     : true,
+            lineTension              : 0.1,
+            backgroundColor          : "rgba(167,105,0,0.4)",
+            borderColor              : "rgb(167, 105, 0)",
+            borderCapStyle           : 'butt',
+            borderDash               : [],
+            borderDashOffset         : 0.0,
+            borderJoinStyle          : 'miter',
+            pointBorderColor         : "white",
+            pointBackgroundColor     : "black",
+            pointBorderWidth         : 1,
+            pointHoverRadius         : 8,
+            pointHoverBackgroundColor: "brown",
+            pointHoverBorderColor    : "yellow",
+            pointHoverBorderWidth    : 2,
+            pointRadius              : 4,
+            pointHitRadius           : 1,
+            // notice the gap in the data and the spanGaps: false
+            data                     :arrPrices ,
+            spanGaps                 : false,
+        }
+
+        ]
+    };
+*/
+
+    /*
+    var ctx     = document.getElementById('myChart');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+
+        options: {
+            scales: {
+                yAxes: [{
+                    id: 'A',
+                    type: 'linear',
+                    position: 'left',
+                }, {
+                    id: 'B',
+                    type: 'linear',
+                    position: 'right',
+                }]
+            }
+        }
+    });
+
+    $(document).ready(function() {
+
+        $('#container').click(function () {
+            console.log("click");
+            $('#container').addClass("overflow-auto");
+            $('#canvas').addClass("canvas");
+
+        });
+    });
+    */
+
+</script>

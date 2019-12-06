@@ -1,0 +1,254 @@
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        Chart showing use of multiple y-axes, where each series has a separate
+        axis. Multiple axes allows data in different ranges to be visualized
+        together. While this in some cases can cause charts to be hard to read,
+        it can also be a powerful tool to illustrate correlations.
+    </p>
+</figure>
+
+
+<script>
+
+
+    $(document).ready(function () {
+        Highcharts.getJSON(
+                '/Unrealized_PL/downloadJson',
+                function (response) {
+
+                    var arrT = response.t;
+                    var arrV = response.v;
+                    var BTC  = Object.values(response.BTC);
+
+
+                    var arrTime = [];
+
+
+                    for (let i = 0; i < arrT.length; i++) {
+
+
+                        var a      = new Date(arrT[i] * 1000);
+                        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        var year   = a.getFullYear();
+                        var month  = months[a.getMonth()];
+                        var date   = a.getDate();
+                        var time   = date + ' ' + month + ' ' + year;
+                        arrTime.push(time);
+                    }
+
+
+
+                    Highcharts.chart('container', {
+                        chart: {
+                            zoomType: 'x'
+                        },
+                        title: {
+                            text: 'Unrealized Profit/Loss'
+                        },
+                        subtitle: {
+                            text: document.ontouchstart === undefined ?
+                                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                        },
+                        xAxis: {
+                            type: 'datetime'
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Unrealized Profit Loss'
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            area: {
+                                fillColor: {
+                                    linearGradient: {
+                                        x1: 0,
+                                        y1: 0,
+                                        x2: 0,
+                                        y2: 1
+                                    },
+                                    stops: [
+                                        [0, Highcharts.getOptions().colors[0]],
+                                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                    ]
+                                },
+                                marker: {
+                                    radius: 2
+                                },
+                                lineWidth: 1,
+                                states: {
+                                    hover: {
+                                        lineWidth: 1
+                                    }
+                                },
+                                threshold: null
+                            }
+                        },
+
+                        series: [{
+                            type: 'area',
+                            name: 'USD to EUR',
+                            data: data
+                        }]
+                    });
+                }
+        );
+
+
+
+
+
+
+/*
+        $.post("/Unrealized_PL/downloadJson", function (response, status) {
+            var arrT = response.t;
+            var arrV = response.v;
+            var BTC  = Object.values(response.BTC);
+
+
+            var arrTime = [];
+
+
+            for (let i = 0; i < arrT.length; i++) {
+
+
+                var a      = new Date(arrT[i] * 1000);
+                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                var year   = a.getFullYear();
+                var month  = months[a.getMonth()];
+                var date   = a.getDate();
+                var time   = date + ' ' + month + ' ' + year;
+                arrTime.push(time);
+            }
+
+                Highcharts.chart('container', {
+                    chart     : {
+                        zoomType: 'xy'
+                    },
+                    title     : {
+                        text : 'Bitcoin: Net Unrealized Profit/Loss',
+                        align: 'left'
+                    },
+                    xAxis     : [{
+                        categories: arrTime,
+                        crosshair : true
+                    }],
+                    yAxis     : [{ // Primary yAxis
+                        type: 'logarithmic',
+                        minorTickInterval: 0.06,
+                        labels  : {
+                            format: '{value}$',
+                            style : {
+                                color: Highcharts.getOptions().colors[2]
+                            }
+                        },
+                        title   : {
+                            text : 'BTC',
+                            style: {
+                                color: Highcharts.getOptions().colors[2]
+                            },
+
+                        },
+                        opposite: true
+
+                    }, { // Secondary yAxis
+                        minorTickInterval: 0,
+                        gridLineWidth: 0,
+                        title        : {
+                            text : 'Unrealized Profit/Loss',
+                            style: {
+                                color: Highcharts.getOptions().colors[0]
+                            }
+                        },
+                        labels       : {
+                            format: '{value}',
+                            style : {
+                                color: Highcharts.getOptions().colors[0]
+                            }
+                        }
+
+                    }],
+                    tooltip   : {
+                        shared: true
+                    },
+                    legend    : {
+                        layout         : 'vertical',
+                        align          : 'left',
+                        x              : 80,
+                        verticalAlign  : 'top',
+                        y              : 55,
+                        floating       : true,
+                        backgroundColor:
+                                Highcharts.defaultOptions.legend.backgroundColor || // theme
+                                'rgba(255,255,255,0.25)'
+                    },
+                    series    : [{
+                        name   : 'Unrealized Profit/Loss',
+                        type   : 'spline',
+                        yAxis  : 1,
+                        data   : arrV,
+                        tooltip: {
+                            valueSuffix: ''
+                        }
+
+                    },{
+                        name   : 'BTC',
+                        type   : 'spline',
+                        data   : BTC,
+                        tooltip: {
+                            valueSuffix: ' $'
+                        }
+                    }],
+                    responsive: {
+                        rules: [{
+                            condition   : {
+                                maxWidth: 500
+                            },
+                            chartOptions: {
+                                legend: {
+                                    floating     : false,
+                                    layout       : 'horizontal',
+                                    align        : 'center',
+                                    verticalAlign: 'bottom',
+                                    x            : 0,
+                                    y            : 0
+                                },
+                                yAxis : [{
+                                    labels       : {
+                                        align: 'right',
+                                        x    : 0,
+                                        y    : -6
+                                    },
+                                    showLastLabel: false
+                                }, {
+                                    labels       : {
+                                        align: 'left',
+                                        x    : 0,
+                                        y    : -6
+                                    },
+                                    showLastLabel: false
+                                }, {
+                                    visible: false
+                                }]
+                            }
+                        }]
+                    }
+                });
+
+        });
+*/
+
+    });
+
+</script>
