@@ -1,46 +1,30 @@
-
-
+<h2> Thank for blockChainInfo stats</h2>
 <figure class="highcharts-figure">
     <div id="container" style="height:50vw"></div>
 </figure>
-
-
 <script>
 
 
     $(document).ready(function () {
-        $.post("/Unrealized_PL/downloadJson", function (response, status) {
+        $.post("/blockChainInfo/downloadJson", function (response, status) {
 
-                    var arrT = response.t;
-                    var arrV = response.v;
+                    // var arrT = response.t;
+                    var arrV    = response.v;
+                    var BTC     = Object.values(response.BTC);
+                    var arrTime = Object.keys(response.BTC);
+                    var dbtc    = [arrV.length * 2];
 
-
-
-                    var BTC  = Object.values(response.BTC);
-
-
-                    var arrTime = [];
-
-
-                    for (let i = 0; i < arrT.length; i++) {
-
-
-                        var a      = new Date(arrT[i] * 1000);
-                        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                        var year   = a.getFullYear();
-                        var month  = months[a.getMonth()];
-                        var date   = a.getDate();
-                        var time   = date + ' ' + month + ' ' + year;
-                        arrTime.push(time);
+                    for (var i = 0; i < arrV.length; i++) {
+                        dbtc.push(arrV[i]);
+                        dbtc.push(arrV[i]);
                     }
-
 
                     Highcharts.chart('container', {
                         chart      : {
                             zoomType: 'xy'
                         },
                         title      : {
-                            text: "Unrealized Profit/Loss ",
+                            text: "Cost per transaction",
                         },
                         subtitle   : {
                             text: document.ontouchstart === undefined ?
@@ -54,11 +38,11 @@
                             type         : 'linear',
                             alignTicks   : true,
                             tickInterval : 1,
-                            tickPositions: [-1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0, 75, 1],
+                            tickPositions: [0, 25, 50, 75, 100, 150, 160],
                             title        : {
-                                text: 'Unrealized Profit/Loss',
+                                text  : 'cost per transaction',
                                 margin: 20,
-                                style: {
+                                style : {
                                     color: Highcharts.getOptions().colors[1]
                                 }
                             },
@@ -76,9 +60,9 @@
                             tickInterval : 1,
                             tickPositions: [0.06, 0, 1, 2, 5, 10, 30, 50, 100, 400, 800, 1000, 1200, 2000, 3200, 6000, 8000, 10000, 12000, 14000, 20000].map((v) => Math.log10(v)),
                             title        : {
-                                text : 'BTC[Price]',
+                                text  : 'BTC[Price]',
                                 margin: 10,
-                                style: {
+                                style : {
                                     color: Highcharts.getOptions().colors[1]
                                 }
                             },
@@ -103,25 +87,32 @@
                         },
 
                         series: [{
-                            name   : 'Unrealized Profit/Loss',
+                            name   : 'Cost per transaction USD',
                             type   : 'spline',
                             yAxis  : 0,
-                            data   : arrV,
+                            data   : dbtc,
                             zones  : [{
                                 value: 0,
-                                color: '#ff0000'
+                                color: '#003399'
                             }, {
-                                value: 0.25,
-                                color: '#ff8a00'
+                                value: 25,
+                                color: '#05ff03'
+
                             }, {
-                                value: 0.5,
+                                value: 50,
+
                                 color: '#fce903'
                             }, {
-                                value: 0.75,
-                                color: '#05ff03'
+                                value: 75,
+                                color: '#ff8a00'
                             }, {
-                                value: 1,
-                                color: '#003399'
+                                value: 100,
+                                color: '#ff0000'
+
+                            },{
+                                value: 200,
+                                color: '#a50846'
+
                             }],
                             tooltip: {
                                 valueSuffix: ''
@@ -136,7 +127,7 @@
                                 valueSuffix: ' $'
                             }
                         }]
-                    });  // fine highcharts
+                    });    // fine highcharts
 
                 }
         );

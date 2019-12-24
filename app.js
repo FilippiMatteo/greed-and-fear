@@ -14,6 +14,7 @@ var fgBTCRouter         = require('./routes/fgBTC');
 var ATBTCRuoter         = require('./routes/ATBTC');
 var fgSP500Ruoter       = require('./routes/fgSP500');
 var Unrealized_PLRuoter = require('./routes/Unrealized_PL');
+var blockChainInfo      = require('./routes/blockChainInfo');
 
 var app = express();
 
@@ -35,6 +36,7 @@ app.use('/fgBTC', fgBTCRouter);
 app.use('/fgSP500', fgSP500Ruoter);
 app.use('/ATBTC', ATBTCRuoter);
 app.use('/Unrealized_PL', Unrealized_PLRuoter);
+app.use('/blockChainInfo', blockChainInfo);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     res.send("errore 404");

@@ -75,7 +75,7 @@
             type         : 'linear',
             alignTicks   : true,
             tickInterval : 1,
-            tickPositions: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+            tickPositions: [0, 25, 35, 50, 75, 100],
             title        : {
                 text  : 'Fear& Greed',
                 margin: 20,
@@ -94,11 +94,11 @@
 
         }, { // Secondary yAxis
             //  type         : 'logarithmic',
-            type         : 'linear',
-            tickInterval : 1,
+            type        : 'linear',
+            tickInterval: 1,
             //   tickPositions: [0.06, 0, 1, 2, 5, 10, 30, 50, 100, 400, 800, 1000, 1200, 2000, 3200, 6000, 8000, 10000, 12000, 14000, 20000].map((v) => Math.log10(v)),
-            tickPositions: [1000, 2000, 3200, 6000, 8000, 10000, 12000, 14000, 20000],
-            title        : {
+            //  tickPositions: [1000, 2000, 3200, 6000, 8000, 10000, 12000, 14000, 20000],
+            title       : {
                 text  : 'BTC[Price]',
                 margin: 10,
                 style : {
@@ -130,6 +130,25 @@
             type   : 'spline',
             yAxis  : 0,
             data   : arrFear,
+            zones  : [{
+                value: 0,
+                color: '#ff0000'
+            }, {
+                value: 25,
+                color: '#ff8a00'
+            }, {
+                value: 35,
+                color: '#fce903'
+            }, {
+                value: 50,
+                color: '#05ff03'
+            }, {
+                value: 75,
+                color: '#003399'
+            }, {
+                value: 100,
+                color: '#000000'
+            }],
             tooltip: {
                 valueSuffix: 'F&G'
             }
