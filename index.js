@@ -45,7 +45,7 @@ app.use(function (req, res, next) {
 });
 
 
-app.listen(HOST, PORT, function () {
+app.listen( PORT,HOST, function () {
     console.log("server listener on 8888")
 });
 
