@@ -4,6 +4,7 @@ var path    = require('path');
 var cors = require('cors');
 
 var PORT = process.env.Port ||  "8888";
+var HOST = '0.0.0.0';
 // use it before all route definitions
 
 var indexRouter  = require('./routes/index');
@@ -44,7 +45,7 @@ app.use(function (req, res, next) {
 });
 
 
-app.listen(PORT, function () {
+app.listen(HOST, PORT, function () {
     console.log("server listener on 8888")
 });
 
