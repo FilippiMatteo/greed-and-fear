@@ -2,7 +2,8 @@ var express = require('express');
 var path    = require('path');
 
 var cors = require('cors');
-
+var PORT = process.env.Port ||  "8888";
+var HOST = '0.0.0.0';
 
 // use it before all route definitions
 
@@ -44,8 +45,8 @@ app.use(function (req, res, next) {
 });
 
 
-app.listen(8888, function () {
-    console.log("server listener on 8888")
+app.listen( PORT,HOST, function () {
+    console.log("server listener on "+PORT)
 });
 
 module.exports = app;

@@ -1,253 +1,235 @@
-<input id="data" type="hidden" value="{{data}}">
-<input id="prices" type="hidden" value="{{prices}}">
+<div id="wrapper" class="row">
+    <div class="col-12 col-sm-12  col-md-6 col-lg-6 ">
+        <h2>Fear & Greed Index BTC</h2>
+        <img style="width: 100%;" src="https://alternative.me/crypto/fear-and-greed-index.png"
+             alt="Latest Crypto Fear & Greed Index"/>
+    </div>
+    <div class="col-12 col-sm-12  col-md-6 col-lg-6">
+        <h2>Historical Values</h2>
+        <div class="fear-container">
+            <div class="row row_table_fear">
+                <div class="col">Now</div>
+                <div class="col" id="now_fear"></div>
+                <div class="col-2 text-center circle_fear" id="now"></div>
+            </div>
+            <div class="row row_table_fear">
+                <div class="col">Yesterday</div>
+                <div class="col" id=yesterday_fear></div>
+                <div class="col-2 text-center circle_fear" id="yesterday"></div>
+            </div>
+            <div class="row row_table_fear">
+                <div class="col">Last Week</div>
+                <div class="col" id="last_week_fear"></div>
+                <div class="col-2 text-center circle_fear" id="last_week"></div>
+            </div>
+            <div class="row row_table_fear">
+                <div class="col">Last Mouth</div>
+                <div class="col" id="last_mouth_fear"></div>
+                <div class="col-2 text-center circle_fear" id="last_mouth"></div>
+            </div>
+            <div class="row row_table_fear">
+                <div class="col">Last Year</div>
+                <div class="col" style="text-overflow: ellipsis;" id=last_year_fear></div>
+                <div class="col-2 text-center circle_fear" id="last_year"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<h2>Fear & Greed Index BTC </h2>
-<img src="https://alternative.me/crypto/fear-and-greed-index.png" alt="Latest Crypto Fear & Greed Index"/>
+<div id="container" class="table">
+    <figure class="highcharts-figure">
+        <div id="container" style="height:100vh"></div>
+    </figure>
+</div>
 
-<script src="./javascripts/chartjs/Chart.js"></script>
-<script src="./javascripts/chartjs/Chart.bundle.js"></script>
-<script src="./javascripts/chartjs/Chart.css"></script>
-
-<style>
-    .overflow-auto {
-        width: 100%;
-        overflow-x: auto;
-        overflow-y: auto
-    }
-
-    .canvas {
-        width: 200vw;
-        height: 100vh
-    }
-</style>
-
-<figure class="highcharts-figure">
-    <div id="container" style="height:50vw"></div>
-</figure>
 
 <script>
 
-    var getData   = JSON.parse(document.getElementById('data').value);
-    var getPrices = JSON.parse(document.getElementById('prices').value);
-    var arrPrices = [];
-    var arrData   = [];
-    var arrFear   = [];
-    var arrbpi    = Object.values(getPrices.bpi);
+    $(document).ready(function () {
 
 
-    for (var i = getData.data.length - 1; i > -1; i--) {
-        var item = getData.data[i];
-        arrFear.push(item.value);
+        $.post("/fgBTC/downloadJson", function (response, status) {
 
-        var a      = new Date(item.timestamp * 1000);
-        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        var year   = a.getFullYear();
-        var month  = months[a.getMonth()];
-        var date   = a.getDate();
-        var time   = date + ' ' + month + ' ' + year;
-        arrData.push(time);
-    }
+            var arrFear = [];
+            var arrBpi  = Object.values(response.bpi);
 
-    arrbpi.forEach(function (item) {
-        var j = 0;
-        arrPrices.push(item / (arrFear[j] * 5));
-    });
+            var arrData = createDataTime(response.fg, arrBpi, arrFear);
+            arrFear     = arrFear.map(parseFloat);
 
-    arrFear = arrFear.map(parseFloat);
+            $("#now").html(response.dataHistory.now.value);
+            $("#now").addClass(setFearColor(response.dataHistory.now.value_classification));
+            $("#now_fear").html(response.dataHistory.now.value_classification);
 
-    Highcharts.chart('container', {
-        chart      : {
+            $("#yesterday").html(response.dataHistory.yesterday.value);
+            $("#yesterday").addClass(setFearColor(response.dataHistory.yesterday.value_classification));
+            $("#yesterday_fear").html(response.dataHistory.yesterday.value_classification);
 
-            zoomType: 'xy'
-        },
-        title      : {
-            text: "Fear and Greed / BTC"
-        },
-        subtitle   : {
-            text: document.ontouchstart === undefined ?
-                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-        },
-        xAxis      : [{
-            categories: arrData,
-            crosshair : true
-        }],
-        yAxis      : [{ // Primary yAxis
-            type         : 'linear',
-            alignTicks   : true,
-            tickInterval : 1,
-            tickPositions: [0, 25, 35, 50, 75, 100],
-            title        : {
-                text  : 'Fear& Greed',
-                margin: 20,
-                style : {
-                    color: Highcharts.getOptions().colors[1]
-                }
-            },
-            labels       : {
-                align : 'right',
-                format: '{value}',
-                style : {
-                    color: Highcharts.getOptions().colors[1]
-                }
-            },
-            opposite     : true
+            $("#last_week").html(response.dataHistory.last_week.value);
+            $("#last_week").addClass(setFearColor(response.dataHistory.last_week.value_classification));
+            $("#last_week_fear").html(response.dataHistory.last_week.value_classification);
 
-        }, { // Secondary yAxis
-            //  type         : 'logarithmic',
-            type        : 'linear',
-            tickInterval: 1,
-            //   tickPositions: [0.06, 0, 1, 2, 5, 10, 30, 50, 100, 400, 800, 1000, 1200, 2000, 3200, 6000, 8000, 10000, 12000, 14000, 20000].map((v) => Math.log10(v)),
-            //  tickPositions: [1000, 2000, 3200, 6000, 8000, 10000, 12000, 14000, 20000],
-            title       : {
-                text  : 'BTC[Price]',
-                margin: 10,
-                style : {
-                    color: Highcharts.getOptions().colors[1]
-                }
-            },
+            $("#last_mouth").html(response.dataHistory.last_mouth.value);
+            $("#last_mouth").addClass(setFearColor(response.dataHistory.last_mouth.value_classification));
+            $("#last_mouth_fear").html(response.dataHistory.last_mouth.value_classification);
 
-            labels: {
-                align : 'right',
-                format: '{value}$',
-                style : {
-                    color: Highcharts.getOptions().colors[1]
-                }
-            }
-
-        }],
-        legend     : {
-            enabled: false
-        },
-        plotOptions: {
-
-            animation: {
-                duration: 2000
-            }
-        },
-
-        series: [{
-            name   : 'Fear & Gread',
-            type   : 'spline',
-            yAxis  : 0,
-            data   : arrFear,
-            zones  : [{
-                value: 0,
-                color: '#ff0000'
-            }, {
-                value: 25,
-                color: '#ff8a00'
-            }, {
-                value: 35,
-                color: '#fce903'
-            }, {
-                value: 50,
-                color: '#05ff03'
-            }, {
-                value: 75,
-                color: '#003399'
-            }, {
-                value: 100,
-                color: '#000000'
-            }],
-            tooltip: {
-                valueSuffix: 'F&G'
-            }
-
-        }, {
-            name   : 'BTC',
-            type   : 'spline',
-            yAxis  : 1,
-            data   : arrbpi,
-            tooltip: {
-                valueSuffix: ' $'
-            }
-        }]
-    }); // fine highcharts
+            $("#last_year").html(response.dataHistory.last_year.value);
+            $("#last_year").addClass(setFearColor(response.dataHistory.last_year.value_classification));
+            $("#last_year_fear").html(response.dataHistory.last_year.value_classification);
 
 
-    /*
-    var data = {
-        labels  : arrData,
-        datasets: [{
-            label                    : "G&F",
-            fill                     : false,
-            lineTension              : 0.1,
-            backgroundColor          : "rgba(225,0,0,0.4)",
-            borderColor              : "red", // The main line color
-            borderCapStyle           : 'square',
-            borderDash               : [], // try [5, 15] for instance
-            borderDashOffset         : 0.0,
-            borderJoinStyle          : 'miter',
-            pointBorderColor         : "black",
-            pointBackgroundColor     : "white",
-            pointBorderWidth         : 0.1,
-            pointHoverRadius         : 0.1,
-            pointHoverBackgroundColor: "yellow",
-            pointHoverBorderColor    : "brown",
-            pointHoverBorderWidth    : 2,
-            pointRadius              : 4,
-            pointHitRadius           : 10,
-            // notice the gap in the data and the spanGaps: true
-            data                     : arrFear,
-            spanGaps                 : true,
-        }, {
-            label                    : "USD/BTC",
-            fill                     : true,
-            lineTension              : 0.1,
-            backgroundColor          : "rgba(167,105,0,0.4)",
-            borderColor              : "rgb(167, 105, 0)",
-            borderCapStyle           : 'butt',
-            borderDash               : [],
-            borderDashOffset         : 0.0,
-            borderJoinStyle          : 'miter',
-            pointBorderColor         : "white",
-            pointBackgroundColor     : "black",
-            pointBorderWidth         : 1,
-            pointHoverRadius         : 8,
-            pointHoverBackgroundColor: "brown",
-            pointHoverBorderColor    : "yellow",
-            pointHoverBorderWidth    : 2,
-            pointRadius              : 4,
-            pointHitRadius           : 1,
-            // notice the gap in the data and the spanGaps: false
-            data                     :arrPrices ,
-            spanGaps                 : false,
-        }
+            //       var arrPrices = createPrices(arrBpi,arrFear);
 
-        ]
-    };
-*/
 
-    /*
-    var ctx     = document.getElementById('myChart');
-    var myChart = new Chart(ctx, {
-        type: 'line',
-        data: data,
+            Highcharts.chart('container', {
+                chart      : {
 
-        options: {
-            scales: {
-                yAxes: [{
-                    id: 'A',
-                    type: 'linear',
-                    position: 'left',
+                    zoomType: 'xy'
+                },
+                title      : {
+                    text: "Fear and Greed / BTC"
+                },
+                subtitle   : {
+                    text: document.ontouchstart === undefined ?
+                            'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                },
+                xAxis      : [{
+                    categories: arrData,
+                    crosshair : true
+                }],
+                yAxis      : [{ // Primary yAxis
+                    type         : 'linear',
+                    alignTicks   : true,
+                    tickInterval : 1,
+                    tickPositions: [0, 25, 47, 55, 75, 85, 100],
+                    title        : {
+                        text  : 'Fear& Greed',
+                        margin: 20,
+                        style : {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    },
+                    labels       : {
+                        align : 'right',
+                        format: '{value}',
+                        style : {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    },
+                    opposite     : true
+
+                }, { // Secondary yAxis
+                    //  type         : 'logarithmic',
+                    type : 'linear',
+                    //tickInterval : 1,
+                    //   tickPositions: [0.06, 0, 1, 2, 5, 10, 30, 50, 100, 400, 800, 1000, 1200, 2000, 3200, 6000, 8000, 10000, 12000, 14000, 20000].map((v) => Math.log10(v)),
+                    //tickPositions: [2000, 3200, 6000, 10000, 14000, 20000],
+                    title: {
+                        text  : 'BTC[Price]',
+                        margin: 10,
+                        style : {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    },
+
+                    labels: {
+                        align : 'right',
+                        format: '{value}$',
+                        style : {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    }
+
+                }],
+                legend     : {
+                    enabled: false
+                },
+                plotOptions: {
+
+                    animation: {
+                        duration: 2000
+                    }
+                },
+
+                series: [{
+                    name         : 'Fear & Gread',
+                    type         : 'spline',
+                    yAxis        : 0,
+                    data         : arrFear,
+                    tickPositions: [0, 25, 47, 55, 75, 85, 100],
+
+                    zones  : [{
+                        value: 25,
+                        color: '#ff0000'
+                    }, {
+                        value: 47,
+                        color: '#ff8a00'
+                    }, {
+                        value: 55,
+                        color: '#fce903'
+                    }, {
+                        value: 75,
+                        color: '#05ff03'
+                    }, {
+                        value: 85,
+                        color: '#003399'
+                    }],
+                    tooltip: {
+                        valueSuffix: 'F&G'
+                    }
+
                 }, {
-                    id: 'B',
-                    type: 'linear',
-                    position: 'right',
+                    name   : 'BTC',
+                    type   : 'spline',
+                    yAxis  : 1,
+                    data   : arrBpi,
+                    tooltip: {
+                        valueSuffix: ' $'
+                    }
                 }]
-            }
-        }
-    });
-
-    $(document).ready(function() {
-
-        $('#container').click(function () {
-            console.log("click");
-            $('#container').addClass("overflow-auto");
-            $('#canvas').addClass("canvas");
+            }); // fine highcharts
 
         });
     });
-    */
 
+
+    function createDataTime(fg, arrBpi, arrFear) {
+        var arrData = [];
+        for (var i = fg.length - 1; i > -1; i--) {
+            var item = fg[i];
+            arrFear.push(fg[i].value);
+
+            var a      = new Date(item.timestamp * 1000);
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var year   = a.getFullYear();
+            var month  = months[a.getMonth()];
+            var date   = a.getDate();
+            var time   = date + ' ' + month + ' ' + year;
+            arrData.push(time);
+        }
+        return arrData;
+    }
+
+    function createPrices(arrBpi, arrFear) {
+        var arrPrices = [];
+        arrBpi.forEach(function (item) {
+            var j = 0;
+            arrPrices.push(item / (arrFear[j] * 5));
+        });
+        return arrPrices;
+    }
+
+    function setFearColor(val) {
+        switch (val) {
+        case "Extreme Fear":
+            return "red";
+        case "Fear":
+            return "orange";
+        case "Neutral":
+            return "yellow";
+        case "Greed":
+            return "green";
+        case "Extreme Greed":
+            return "blu";
+        }
+    }
 </script>
