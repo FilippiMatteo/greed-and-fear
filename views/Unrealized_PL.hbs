@@ -64,7 +64,7 @@
                             type         : 'linear',
                             alignTicks   : true,
                             tickInterval : 1,
-                            tickPositions: [-1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0, 75, 1],
+                            tickPositions: [-1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1],
                             title        : {
                                 text  : 'Unrealized Profit/Loss',
                                 margin: 20,
@@ -84,7 +84,7 @@
                         }, { // Secondary yAxis
                             type         : 'logarithmic',
                             tickInterval : 1,
-                            tickPositions: [0.06, 0, 1, 2, 5, 10, 30, 50, 100, 400, 800, 1000, 1200, 2000, 3200, 6000, 8000, 10000, 12000, 14000, 20000].map((v) => Math.log10(v)),
+                            tickPositions: [0.06, 0, 1, 2, 5, 10, 30, 50, 100, 400, 1200, 2000, 3200, 6000, 10000, 14000, 20000].map((v) => Math.log10(v)),
                             title        : {
                                 text  : 'BTC[Price]',
                                 margin: 10,
