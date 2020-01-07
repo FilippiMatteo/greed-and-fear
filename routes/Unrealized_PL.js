@@ -16,7 +16,6 @@ router.post('/downloadJson', function (req, res, next) {
     var startDateSince = isMobileDevice ? new Date("2017-07-17").getTime() / 1000 : 0;
 
     let url = "https://api.glassnode.com/v1/metrics/indicators/net_unrealized_profit_loss?a=btc&api_key=" + API_Key + "&s=" + startDateSince;
-    console.dir(url)
     var endDate      = new Date().toISOString().substr(0, 10);
     var startDateBTC = isMobileDevice ? "2017-07-17" : "2010-07-17";
     var urlBTC       = 'https://api.coindesk.com/v1/bpi/historical/close.json?start=' + startDateBTC + '&end=' + endDate;
