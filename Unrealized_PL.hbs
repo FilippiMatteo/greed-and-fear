@@ -22,7 +22,7 @@
     $(document).ready(function () {
 
 
-        $.post("/Unrealized_PL/downloadJson", function (response, status) {
+        $.post("/Unrealized_PL/downloadJson", {isMobileDevice :!isMobileDevice()}, function (response, status) {
 
                     var arrT = response.t;
                     var arrV = response.v;
@@ -33,22 +33,21 @@
 
                     var arrTime = [];
 
-            if (!isMobileDevice()) {
 
 
-                for (let i = 0; i < arrT.length; i++) {
+                    for (let i = 0; i < arrT.length; i++) {
 
 
-                    var a      = new Date(arrT[i] * 1000);
-                    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                    var year   = a.getFullYear();
-                    var month  = months[a.getMonth()];
-                    var date   = a.getDate();
-                    var time   = date + ' ' + month + ' ' + year;
-                    arrTime.push(time);
-                }
+                        var a      = new Date(arrT[i] * 1000);
+                        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        var year   = a.getFullYear();
+                        var month  = months[a.getMonth()];
+                        var date   = a.getDate();
+                        var time   = date + ' ' + month + ' ' + year;
+                        arrTime.push(time);
+                    }
 
-            }
+
                     Highcharts.chart('container', {
                         chart      : {
                             zoomType: 'xy'
