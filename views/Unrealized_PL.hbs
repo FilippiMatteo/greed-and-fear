@@ -20,7 +20,9 @@
 
 
     $(document).ready(function () {
-        $.post("/Unrealized_PL/downloadJson", function (response, status) {
+
+
+        $.post("/Unrealized_PL/downloadJson", {isMobileDevice :!isMobileDevice()}, function (response, status) {
 
                     var arrT = response.t;
                     var arrV = response.v;
@@ -30,6 +32,7 @@
 
 
                     var arrTime = [];
+
 
 
                     for (let i = 0; i < arrT.length; i++) {
@@ -153,5 +156,9 @@
 
 
     }); // chiusura Documents
+
+    function isMobileDevice() {
+        return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    };
 
 </script>
