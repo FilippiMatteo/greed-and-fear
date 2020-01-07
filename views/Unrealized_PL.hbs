@@ -22,7 +22,7 @@
     $(document).ready(function () {
 
 
-        $.post("/Unrealized_PL/downloadJson", {isMobileDevice :!isMobileDevice()}, function (response, status) {
+        $.post("/Unrealized_PL/downloadJson", {isMobileDevice :isMobileDevice()}, function (response, status) {
 
                     var arrT = response.t;
                     var arrV = response.v;
