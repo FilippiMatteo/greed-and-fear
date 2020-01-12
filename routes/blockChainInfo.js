@@ -9,13 +9,14 @@ router.get('/', function(req, res, next) {
 
 router.post('/downloadJson', function (req, res, next) {
     var isMobileDevice = JSON.parse(req.body.isMobileDevice);
-    let startDate= isMobileDevice ? "2017-01-01" : "2010-08-17";
+    let startDate= !isMobileDevice ? "2016-01-01" : "2010-08-17";
 
 
     let url     = "https://api.blockchain.info/charts/cost-per-transaction?timespan=all&start="+startDate;
     var date    = new Date().toISOString().substr(0, 10);
 
     var urlBTC = 'https://api.coindesk.com/v1/bpi/historical/close.json?start='+startDate+'&end=' + date;
+    console.log(urlBTC);
     //  var urlBTC = 'https://api.coindesk.com/v1/bpi/historical/close.json?start=2019-11-17&end=' + date;
 
 

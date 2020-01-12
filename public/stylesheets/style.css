@@ -18,8 +18,6 @@ h2 {
 }
 
 
-
-
 .table {
     display: table;
 }
@@ -67,23 +65,43 @@ h2 {
     color: #fff;
 }
 
-.green {
+.font-red {
+    color: #ff0000;
+}
+
+.font-green {
+    color: #05ff03;
+}
+
+.font-yellow {
+    color: #fce903;
+}
+
+.font-orange {
+    color: #ff8a00;
+}
+
+.font-blu {
+    color: #003399;
+}
+
+.background-green {
     background-color: #05ff03;
 }
 
-.yellow {
+.background-yellow {
     background-color: #fce903;
 }
 
-.red {
+.background-red {
     background-color: #ff0000;
 }
 
-.orange {
+.background-orange {
     background-color: #ff8a00;
 }
 
-.blue {
+.background-blue {
     background-color: #003399;
 }
 
@@ -94,6 +112,21 @@ h2 {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.loader {
+    display: none;
+    height: 100vh;
+    opacity: 0.5;
+    text-align: center;
+}
+
+.show {
+    display: block;
+}
+
+.hide {
+    display: none;
 }
 
 @media screen and (max-width: 450px) {

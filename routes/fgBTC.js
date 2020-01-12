@@ -27,6 +27,7 @@ router.post('/downloadJson', function (req, res, next) {
             fg : responseFG.data.data,
             bpi: responseBTC.data.bpi,
             dataHistory: createDataHistory(responseFG.data.data),
+
         });
 
     })).catch(error => {

@@ -22,6 +22,8 @@ router.post('/downloadJson', function (req, res, next) {
     //  var urlBTC = 'https://api.coindesk.com/v1/bpi/historical/close.json?start=2019-11-17&end=' + date;
 
 
+
+
     axios.all([
         axios.get(url),
         axios.get(urlBTC),
